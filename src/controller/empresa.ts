@@ -1,3 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
+import { RequestDataPersona } from './interfaces'
 
-const registrarEmpresa = (req: Request, res: Response) => {}
+const registrarEmpresa = (req: RequestDataPersona, res: Response) => {
+  try {
+  } catch (error) {}
+}
