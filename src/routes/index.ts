@@ -1,5 +1,6 @@
 import { Router, json, urlencoded, Request, Response } from 'express'
 import cors from 'cors'
+import bearerToken from 'express-bearer-token'
 import { resolve } from 'path'
 import routes from './routes'
 
@@ -8,6 +9,7 @@ const router = Router()
 router.use(cors())
 router.use(json())
 router.use(urlencoded({ extended: true }))
+router.use(bearerToken())
 
 router.use('/api', routes)
 

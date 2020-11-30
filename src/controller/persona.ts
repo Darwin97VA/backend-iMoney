@@ -75,17 +75,18 @@ export const getPersona = async (
   next: NextFunction
 ) => {
   try {
-    const BearerToken = req.headers.authorization
-
-    if (BearerToken) {
-      const token = BearerToken.split(' ')[1]
+    const { token } = req
+    if (token) {
       const decoded: TokenData | string = jwt.verify(token, config.SECRET_JWT)
 
       if (decoded && typeof decoded === 'object') {
         const ID_PERSONA = decoded.ID_PERSONA
         const persona = await Persona.findById(ID_PERSONA)
 
-        if (persona && req.__data) {
+        if (persona) {
+          if (!req.__data) {
+            req.__data = {}
+          }
           req.__data.persona = persona
           return next()
         }
@@ -133,7 +134,7 @@ export const confirmMail = async (req: Request, res: Response) => {
       }
 
       const yaEsPropietario = persona.usuarios?.propietario.find(
-        (_id) => _id === persona._id
+        (_id) => _id == persona._id
       )
       if (!yaEsPropietario) {
         persona.usuarios.propietario.push(persona._id)
@@ -188,7 +189,7 @@ export const crearPersona = async (req: RequestRegistro, res: Response) => {
 // estandar: IdPersona[]
 // visitante: IdPersona[]
 
-enum NivelAsignacion {
+export enum NivelAsignacion {
   propietario = 'propietario',
   administrador = 'administrador',
   estandar = 'estandar',
@@ -201,7 +202,12 @@ export const asignarEnEmpresa = async (
   nivel: NivelAsignacion
 ) => {
   try {
-    const { propietario, administrador, estandar, visitante } = empresa.usuarios
+    const {
+      propietario = [],
+      administrador = [],
+      estandar = [],
+      visitante = [],
+    } = empresa.usuarios
 
     propietario.filter((_id) => _id !== persona._id)
     administrador.filter((_id) => _id !== persona._id)
@@ -215,7 +221,13 @@ export const asignarEnEmpresa = async (
       visitante,
     }
 
-    empresa.usuarios[nivel].push(persona._id)
+    if (!empresa.usuarios[nivel]) {
+      empresa.usuarios[nivel] = []
+    }
+    const isAdded = empresa.usuarios[nivel].find((_id) => _id == persona._id)
+    if (!isAdded) {
+      empresa.usuarios[nivel].push(persona._id)
+    }
 
     const asignamientos = persona.asignamientos.filter(
       (asignamiento) => asignamiento._id !== empresa._id
@@ -227,6 +239,28 @@ export const asignarEnEmpresa = async (
 
     await empresa.save()
     await persona.save()
+
+    return true
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+export const getPersonaById = async (_id: string) => Persona.findById(_id)
+
+export const asignarEnEmpresaConIdPersona = async (
+  _id: string,
+  empresa: IEmpresa,
+  nivel: NivelAsignacion
+) => {
+  try {
+    const persona = await getPersonaById(_id)
+    if (persona) {
+      return await asignarEnEmpresa(persona, empresa, nivel)
+    } else {
+      return null
+    }
   } catch (error) {
     console.error(error)
     return null

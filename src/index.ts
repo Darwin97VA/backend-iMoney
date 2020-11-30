@@ -1,5 +1,5 @@
 import connection from './models'
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { createServer } from 'http'
 
 import io from './socket.io'
@@ -8,12 +8,18 @@ import tests from './tests'
 
 const PORT = process.env.PORT || 3090
 
+const Logger = (req: Request, _res: Response, next: NextFunction) => {
+  console.log(req.url, req.headers)
+  next()
+}
+
 // Database
 connection()
   .then((_connection) => {
     // Express
     const app = express()
     app.use(routes)
+    // app.use(Logger, routes)
 
     // HTTP
     const http = createServer(app)

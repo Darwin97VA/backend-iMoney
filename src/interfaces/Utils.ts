@@ -1,4 +1,4 @@
-import { IdPersona } from './Persona'
+import { Identidad, IdPersona } from './Persona'
 
 // Lo siguiente está pensado para ser asignado
 // a una propiedad "usuarios". Ejm:
@@ -10,6 +10,13 @@ export interface Usuarios {
   administrador: IdPersona[]
   estandar: IdPersona[]
   visitante: IdPersona[]
+}
+
+export interface UsuariosDetalle {
+  propietario: Identidad[]
+  administrador: Identidad[]
+  estandar: Identidad[]
+  visitante: Identidad[]
 }
 
 export enum TipoCuenta {
@@ -29,7 +36,7 @@ export enum Banco {
 }
 
 export enum Nacionalidad {
-  Perú = 'Perú',
+  Peru = 'Peru',
   Colombia = 'Colombia',
 }
 

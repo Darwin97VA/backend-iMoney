@@ -14,7 +14,7 @@ interface AsignamientoPersona {
   tipo: 'Persona'
 }
 
-interface Identidad {
+export interface Identidad {
   tipoDocumentoIdentidad: TipoDocumentoIdentidad
   documentoIdentidad: string
   foto: IdArchivo
