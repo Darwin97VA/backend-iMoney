@@ -66,7 +66,7 @@ export const getSujetosDeAsignaciones = async (personas: IPersona) => {
         (e) => !!e
       ) || []
     let personasEnDondeEstoy =
-      (await Promise.all(_personasId.map(getEmpresaById)))?.filter(
+      (await Promise.all(_personasId.map(getPersonaById)))?.filter(
         (e) => !!e
       ) || []
 

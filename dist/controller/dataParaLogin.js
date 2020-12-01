@@ -114,7 +114,7 @@ var getSujetosDeAsignaciones = function (personas) { return __awaiter(void 0, vo
                 return [4 /*yield*/, Promise.all(_empresasId.map(empresa_1.getEmpresaById))];
             case 1:
                 empresasEnDondeEstoy = ((_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.filter(function (e) { return !!e; })) || [];
-                return [4 /*yield*/, Promise.all(_personasId.map(empresa_1.getEmpresaById))];
+                return [4 /*yield*/, Promise.all(_personasId.map(persona_1.getPersonaById))];
             case 2:
                 personasEnDondeEstoy = ((_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.filter(function (e) { return !!e; })) || [];
                 return [4 /*yield*/, Promise.all(empresasEnDondeEstoy.map(function (e) {

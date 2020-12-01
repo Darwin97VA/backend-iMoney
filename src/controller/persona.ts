@@ -186,11 +186,18 @@ export const confirmMail = async (req: Request, res: Response) => {
             <img src="http://${req.hostname}/img/Check.png" style="width: 80px;"/>
           </main>
           <strong style="color: white; margin-top: 1em;">Ir al <a href="http://${req.hostname}/login" style="color: white">Login</a></strong>
+          <span style="color: white;">Redirigiendo en <strong id="secs"></strong></span>
         </div>
         <script>
+          const segundos = 3
+          let segundo = 1
+          setInterval(() => {
+            document.getElementById('secs').innerHTML = segundos - segundo
+            segundo++
+          }, 1000)
           setTimeout(() => {
             window.location.href = "http://${req.hostname}/login"
-          }, 3000)
+          }, segundos * 1000)
         </script>
       `)
     }
