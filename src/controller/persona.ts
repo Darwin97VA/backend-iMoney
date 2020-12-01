@@ -169,8 +169,16 @@ export const confirmMail = async (req: Request, res: Response) => {
       await persona.save()
 
       return res.send(/* html */ `
+        <style>
+        *{
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+          font-family: Helvetica, arial;
+        }
+        </style>
         <div style="display: flex; height: 100vh; width: 100%; justify-content: center; align-items: center;
-          background: #001C54;
+          background: #001C54; flex-direction: column;
           ">
           <main style="background: white; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <h1 style="color: gray;">Tu usuario se ha confirmado</h1> 

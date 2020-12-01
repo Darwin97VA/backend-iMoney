@@ -31,7 +31,7 @@ const getHtml = ({
   nombre,
   urlBase,
 }: RegisterConfirmationType) => /* html */ `
-    <table style="background: #001C54; color: white;">
+    <table style="background: #001C54; color: white; width: 450px;">
         <thead>
             <tr>
                 <th>

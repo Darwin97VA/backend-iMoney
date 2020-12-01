@@ -13,15 +13,22 @@ const getText = ({ URL }: RegisterConfirmationType) => `
   Para completar su registro debe acceder al siguiente link: ${URL}
 `
 
-const sendRegisterConfirmation = (
+const sendRegisterConfirmation = async (
   emails: string,
   data: RegisterConfirmationType
-): Promise<any> =>
-  sender({
-    to: emails,
-    subject: SUBJECT,
-    text: getText(data),
-    html: getHtml(data),
-  })
+): Promise<any> => {
+  try {
+    const result = await sender({
+      to: emails,
+      subject: SUBJECT,
+      text: getText(data),
+      html: getHtml(data),
+    })
+    return result
+  } catch (e) {
+    console.error(e)
+    return e
+  }
+}
 
 export default sendRegisterConfirmation
