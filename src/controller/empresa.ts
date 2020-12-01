@@ -51,11 +51,12 @@ const siNoExistenUsuariosCrearlos = async (
   }
 }
 
-const sincronizarAsignacionEnPersona = async (
+const sincronizarAsignacionEnEmpresa = async (
   empresa: IEmpresa,
   usuarios: Usuarios
 ) => {
   try {
+    //#region SICRONIZANDO EN EMPRESA.USUARIOS
     const { propietario, administrador, estandar, visitante } = usuarios
 
     for await (let idPersona of propietario) {
@@ -90,6 +91,7 @@ const sincronizarAsignacionEnPersona = async (
       )
       if (!result) return result
     }
+    //#endregion
 
     return true
   } catch (error) {
@@ -135,7 +137,7 @@ export const registrarEmpresa = async (req: RequestRegistro, res: Response) => {
           console.log(usuarios)
 
           const empresa = await _empresa.save()
-          const sincronizacion = await sincronizarAsignacionEnPersona(
+          const sincronizacion = await sincronizarAsignacionEnEmpresa(
             empresa,
             usuarios
           )

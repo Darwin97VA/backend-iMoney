@@ -103,7 +103,7 @@ export const getSujetosDeAsignaciones = async (personas: IPersona) => {
     TodasPersonas.forEach((_persona) => {
       const añadida = PersonasNoDuplicadas.find((_p) => {
         if (_persona && _p) {
-          return _p._id === _persona._id
+          return String(_p._id) == String(_persona._id)
         }
         return false
       })
@@ -116,18 +116,16 @@ export const getSujetosDeAsignaciones = async (personas: IPersona) => {
 
     empresasEnDondeEstoy.forEach((_em) => {
       if (_em) {
-        const añadida = EmpresasNoDuplicadas.find((_e) => {
-          if (_e) {
-            return _e._id === _em._id
-          }
-          return false
-        })
+        const añadida = EmpresasNoDuplicadas.find(
+          (_e) => _e && String(_e._id) == String(_em._id)
+        )
+
         if (!añadida) {
           EmpresasNoDuplicadas.push(_em)
         }
       }
     })
-
+    console.log('EmpresasNoDuplicadas', EmpresasNoDuplicadas)
     return { Personas: PersonasNoDuplicadas, Empresas: EmpresasNoDuplicadas }
   } catch (error) {
     console.error(error)

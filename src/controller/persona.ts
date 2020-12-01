@@ -28,7 +28,6 @@ export const login = async (req: Request, res: Response) => {
 
           if (TODA_LA_DATA) {
             const { Personas, Empresas } = TODA_LA_DATA
-            console.log(Personas, Empresas)
 
             const token = jwt.sign(dataToken, config.SECRET_JWT)
             return res.json({
@@ -68,7 +67,11 @@ export const registro = async (req: RequestRegistro, res: Response) => {
       )}${baseUrl}${PATH_INICIAL_CORREO}/`
       const URL = urlBase + token
 
-      await registerConfirmation(persona.correo, { URL })
+      await registerConfirmation(persona.correo, {
+        URL,
+        nombre: persona.identidad.nombres,
+        urlBase: `http://${req.hostname}`,
+      })
 
       return res.json({
         data: 'Correo de confirmación enviado! Será valido por 5 minutos',

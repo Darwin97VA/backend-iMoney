@@ -5,6 +5,8 @@ const SUBJECT = 'Confirma tu registro'
 
 export interface RegisterConfirmationType {
   URL: string
+  nombre: string
+  urlBase: string
 }
 
 const getText = ({ URL }: RegisterConfirmationType) => `

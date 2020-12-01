@@ -79,7 +79,6 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 TODA_LA_DATA = _a.sent();
                 if (TODA_LA_DATA) {
                     Personas = TODA_LA_DATA.Personas, Empresas = TODA_LA_DATA.Empresas;
-                    console.log(Personas, Empresas);
                     token = jsonwebtoken_1.default.sign(dataToken, _config_1.default.SECRET_JWT);
                     return [2 /*return*/, res.json({
                             data: { token: token, _id: ID_PERSONA, persona: persona, Personas: Personas, Empresas: Empresas },
@@ -116,7 +115,11 @@ var registro = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 });
                 urlBase = "http://" + req.get('host') + baseUrl + Persona_2.PATH_INICIAL_CORREO + "/";
                 URL = urlBase + token;
-                return [4 /*yield*/, registerConfirmation_1.default(persona.correo, { URL: URL })];
+                return [4 /*yield*/, registerConfirmation_1.default(persona.correo, {
+                        URL: URL,
+                        nombre: persona.identidad.nombres,
+                        urlBase: "http://" + req.hostname,
+                    })];
             case 2:
                 _a.sent();
                 return [2 /*return*/, res.json({

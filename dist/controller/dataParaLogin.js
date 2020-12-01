@@ -142,7 +142,7 @@ var getSujetosDeAsignaciones = function (personas) { return __awaiter(void 0, vo
                 TodasPersonas.forEach(function (_persona) {
                     var añadida = PersonasNoDuplicadas_1.find(function (_p) {
                         if (_persona && _p) {
-                            return _p._id === _persona._id;
+                            return String(_p._id) == String(_persona._id);
                         }
                         return false;
                     });
@@ -153,17 +153,13 @@ var getSujetosDeAsignaciones = function (personas) { return __awaiter(void 0, vo
                 EmpresasNoDuplicadas_1 = [];
                 empresasEnDondeEstoy.forEach(function (_em) {
                     if (_em) {
-                        var añadida = EmpresasNoDuplicadas_1.find(function (_e) {
-                            if (_e) {
-                                return _e._id === _em._id;
-                            }
-                            return false;
-                        });
+                        var añadida = EmpresasNoDuplicadas_1.find(function (_e) { return _e && String(_e._id) == String(_em._id); });
                         if (!añadida) {
                             EmpresasNoDuplicadas_1.push(_em);
                         }
                     }
                 });
+                console.log('EmpresasNoDuplicadas', EmpresasNoDuplicadas_1);
                 return [2 /*return*/, { Personas: PersonasNoDuplicadas_1, Empresas: EmpresasNoDuplicadas_1 }];
             case 5:
                 error_2 = _c.sent();

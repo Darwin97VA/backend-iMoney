@@ -146,7 +146,7 @@ var siNoExistenUsuariosCrearlos = function (usuarios) { return __awaiter(void 0,
         }
     });
 }); };
-var sincronizarAsignacionEnPersona = function (empresa, usuarios) { return __awaiter(void 0, void 0, void 0, function () {
+var sincronizarAsignacionEnEmpresa = function (empresa, usuarios) { return __awaiter(void 0, void 0, void 0, function () {
     var propietario, administrador, estandar, visitante, propietario_1, propietario_1_1, idPersona, result, e_2_1, administrador_1, administrador_1_1, idPersona, result, e_3_1, estandar_1, estandar_1_1, idPersona, result, e_4_1, visitante_1, visitante_1_1, idPersona, result, e_5_1, error_1;
     var e_2, _a, e_3, _b, e_4, _c, e_5, _d;
     return __generator(this, function (_e) {
@@ -283,7 +283,9 @@ var sincronizarAsignacionEnPersona = function (empresa, usuarios) { return __awa
                 if (e_5) throw e_5.error;
                 return [7 /*endfinally*/];
             case 48: return [7 /*endfinally*/];
-            case 49: return [2 /*return*/, true];
+            case 49: 
+            //#endregion
+            return [2 /*return*/, true];
             case 50:
                 error_1 = _e.sent();
                 console.error(error_1);
@@ -322,7 +324,7 @@ var registrarEmpresa = function (req, res) { return __awaiter(void 0, void 0, vo
                 return [4 /*yield*/, _empresa.save()];
             case 4:
                 empresa = _a.sent();
-                return [4 /*yield*/, sincronizarAsignacionEnPersona(empresa, usuarios_1)];
+                return [4 /*yield*/, sincronizarAsignacionEnEmpresa(empresa, usuarios_1)];
             case 5:
                 sincronizacion = _a.sent();
                 if (sincronizacion) {
