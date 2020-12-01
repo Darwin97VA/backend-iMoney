@@ -1,8 +1,8 @@
 node_modules
 .dist
 .DS_Store
-dist
 src/config.ts
+src/_config.ts
 
 .env
 ormconfig.json
