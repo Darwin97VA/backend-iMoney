@@ -33,4 +33,6 @@ const sender = (options: RestMailOptions) =>
     ...options,
   })
 
+console.log(config)
+
 export default sender

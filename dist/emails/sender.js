@@ -29,4 +29,5 @@ var transporter = nodemailer_1.createTransport({
 var sender = function (options) {
     return transporter.sendMail(__assign({ from: "\"" + MAIL_NAME + "\" <" + SMTP_USER + ">" }, options));
 };
+console.log(_config_1.default);
 exports.default = sender;
