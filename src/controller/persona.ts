@@ -180,14 +180,18 @@ export const confirmMail = async (req: Request, res: Response) => {
         <div style="display: flex; height: 100vh; width: 100%; justify-content: center; align-items: center;
           background: #001C54; flex-direction: column;
           ">
-          <main style="background: white; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <main style="padding: 2em; border-radius: 2em; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <h1 style="color: gray;">Tu usuario se ha confirmado</h1> 
             <div style="color: black;">Felicidades por unirte a iMoney!</div> 
             <img src="http://${req.hostname}/img/Check.png" style="width: 80px;"/>
           </main>
-          <strong style="color: white">Ir al <a href="http://${req.hostname}/login" style="color: white">Login</a></strong>
+          <strong style="color: white; margin-top: 1em;">Ir al <a href="http://${req.hostname}/login" style="color: white">Login</a></strong>
         </div>
-
+        <script>
+          setTimeout(() => {
+            window.location.href = "http://${req.hostname}/login"
+          }, 3000)
+        </script>
       `)
     }
     return res
