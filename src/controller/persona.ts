@@ -3,26 +3,39 @@ import jwt from 'jsonwebtoken'
 import config from '../config'
 import Persona from '../models/Persona'
 import registerConfirmation from '../emails/registerConfirmation'
-import { Asignamiento, IPersona } from '../interfaces/Persona'
+import { IPersona } from '../interfaces/Persona'
+import { Asignamiento, NivelAsignacion } from '../interfaces/Utils'
 import { PATH_INICIAL_CORREO } from '../routes/Persona'
 import { TokenData, RequestDataPersona } from './interfaces'
 import { IEmpresa } from '../interfaces/Empresa'
+import { getSujetosDeAsignaciones } from './dataParaLogin'
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const persona = await Persona.findOne({ correo: req.body.correo })
+    if (req.body.correo && req.body.contraseña) {
+      const persona = await Persona.findOne({ correo: req.body.correo })
 
-    if (persona) {
-      const verificaPassword = await persona.comparePassword(
-        req.body.contraseña
-      )
+      if (persona) {
+        const verificaPassword = await persona.comparePassword(
+          req.body.contraseña
+        )
 
-      if (verificaPassword) {
-        const ID_PERSONA = persona._id
-        const dataToken: TokenData = { ID_PERSONA }
+        if (verificaPassword) {
+          const ID_PERSONA = persona._id
+          const dataToken: TokenData = { ID_PERSONA }
 
-        const token = jwt.sign(dataToken, config.SECRET_JWT)
-        return res.json({ data: token })
+          const TODA_LA_DATA = await getSujetosDeAsignaciones(persona)
+
+          if (TODA_LA_DATA) {
+            const { Personas, Empresas } = TODA_LA_DATA
+            console.log(Personas, Empresas)
+
+            const token = jwt.sign(dataToken, config.SECRET_JWT)
+            return res.json({
+              data: { token, _id: ID_PERSONA, persona, Personas, Empresas },
+            })
+          }
+        }
       }
     }
     return res.status(400).json({ error: 'Credencial inválidas' })
@@ -188,13 +201,6 @@ export const crearPersona = async (req: RequestRegistro, res: Response) => {
 // administrador: IdPersona[]
 // estandar: IdPersona[]
 // visitante: IdPersona[]
-
-export enum NivelAsignacion {
-  propietario = 'propietario',
-  administrador = 'administrador',
-  estandar = 'estandar',
-  visitante = 'visitante',
-}
 
 export const asignarEnEmpresa = async (
   persona: IPersona,

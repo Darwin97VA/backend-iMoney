@@ -9,7 +9,7 @@ import tests from './tests'
 const PORT = process.env.PORT || 3090
 
 const Logger = (req: Request, _res: Response, next: NextFunction) => {
-  console.log(req.url, req.headers)
+  console.log(req.body, req.headers)
   next()
 }
 
@@ -18,8 +18,8 @@ connection()
   .then((_connection) => {
     // Express
     const app = express()
+    // app.use(Logger)
     app.use(routes)
-    // app.use(Logger, routes)
 
     // HTTP
     const http = createServer(app)

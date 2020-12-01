@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { IEmpresa, IEmpresaRequest } from '../interfaces/Empresa'
 import { Identidad } from '../interfaces/Persona'
-import { Usuarios, UsuariosDetalle } from '../interfaces/Utils'
+import { Usuarios, UsuariosDetalle, NivelAsignacion } from '../interfaces/Utils'
 import Persona from '../models/Persona'
 import Empresa from '../models/Empresa'
 import { RequestDataPersona } from './interfaces'
-import { asignarEnEmpresaConIdPersona, NivelAsignacion } from './persona'
+import { asignarEnEmpresaConIdPersona } from './persona'
 
 const getIdsPersonas = async (identidades: Identidad[]): Promise<string[]> => {
   const ids = []
@@ -157,3 +157,5 @@ export const registrarEmpresa = async (req: RequestRegistro, res: Response) => {
     return res.status(400).json({ error })
   }
 }
+
+export const getEmpresaById = (_id: string) => Empresa.findById(_id)

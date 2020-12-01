@@ -17,7 +17,7 @@ export type IdEmpresa = MongooseDocument['_id']
 export interface IEmpresa extends Document {
   _id: IdEmpresa
   ruc: number
-  razonSocial: String
+  razonSocial: string
   representanteLegal: RepresentanteLegal[]
 
   usuarios: Usuarios

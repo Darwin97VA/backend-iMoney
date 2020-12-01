@@ -1,18 +1,13 @@
 import { IdArchivo } from './Archivo'
 import { IdCuenta } from './Cuenta'
 import { IdEmpresa } from './Empresa'
-import { Nacionalidad, TipoDocumentoIdentidad, Usuarios } from './Utils'
+import {
+  Nacionalidad,
+  TipoDocumentoIdentidad,
+  Usuarios,
+  Asignamiento,
+} from './Utils'
 import { Document, MongooseDocument } from 'mongoose'
-
-interface AsignamientoEmpresa {
-  _id: IdEmpresa
-  tipo: 'Empresa'
-}
-
-interface AsignamientoPersona {
-  _id: IdPersona
-  tipo: 'Persona'
-}
 
 export interface Identidad {
   tipoDocumentoIdentidad: TipoDocumentoIdentidad
@@ -24,7 +19,6 @@ export interface Identidad {
   primerApellido: string
   segundoApellido: string
 }
-export type Asignamiento = AsignamientoEmpresa | AsignamientoPersona
 
 export type IdPersona = MongooseDocument['_id']
 export interface IPersona extends Document {

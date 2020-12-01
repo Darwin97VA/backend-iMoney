@@ -1,3 +1,4 @@
+import { IdEmpresa } from './Empresa'
 import { Identidad, IdPersona } from './Persona'
 
 // Lo siguiente está pensado para ser asignado
@@ -43,4 +44,22 @@ export enum Nacionalidad {
 export enum TipoDocumentoIdentidad {
   Dni = 'Dni',
   CarnetExtrajeria = 'Carnet de Extranjeria',
+}
+
+export interface AsignamientoEmpresa {
+  _id: IdEmpresa
+  tipo: 'Empresa'
+}
+
+export interface AsignamientoPersona {
+  _id: IdPersona
+  tipo: 'Persona'
+}
+export type Asignamiento = AsignamientoEmpresa | AsignamientoPersona
+
+export enum NivelAsignacion {
+  propietario = 'propietario',
+  administrador = 'administrador',
+  estandar = 'estandar',
+  visitante = 'visitante',
 }
