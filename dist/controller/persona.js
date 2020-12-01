@@ -214,7 +214,7 @@ var confirmMail = function (req, res) { return __awaiter(void 0, void 0, void 0,
                 return [4 /*yield*/, persona_1.save()];
             case 3:
                 _b.sent();
-                return [2 /*return*/, res.json({ data: '¡Registro exitoso!\nYa puede iniciar sesión' })];
+                return [2 /*return*/, res.send(/* html */ "\n        <div style=\"display: flex; height: 100vh; width: 100%; justify-content: center; align-items: center;\n          background: #001C54;\n          \">\n          <main style=\"background: white; display: flex; flex-direction: column; justify-content: center; align-items: center;\">\n            <h1 style=\"color: gray;\">Tu usuario se ha confirmado</h1> \n            <div style=\"color: black;\">Felicidades por unirte a iMoney!</div> \n            <img src=\"http://" + req.hostname + "/img/Check.png\" style=\"width: 80px;\"/>\n          </main>\n          <strong style=\"color: white\">Ir al <a href=\"http://" + req.hostname + "/login\" style=\"color: white\">Login</a></strong>\n        </div>\n\n      ")];
             case 4: return [2 /*return*/, res
                     .status(400)
                     .json({ error: 'El token entregado no devolvió ningún usuario' })];
