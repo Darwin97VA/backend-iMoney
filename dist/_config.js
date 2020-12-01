@@ -14,4 +14,5 @@ exports.default = {
     SMTP_HOST: 'smtp.gmail.com',
     SMTP_PORT: '587',
     MAIL_NAME: 'iMoney',
+    PATH_HTML: 'E:\\code\\node\\imoney-frontend\\build',
 };

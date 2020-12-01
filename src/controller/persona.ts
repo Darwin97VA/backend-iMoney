@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import config from '../config'
+import config from '../_config'
 import Persona from '../models/Persona'
 import registerConfirmation from '../emails/registerConfirmation'
 import { IPersona } from '../interfaces/Persona'

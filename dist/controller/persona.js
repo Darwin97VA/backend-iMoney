@@ -52,7 +52,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.asignarEnEmpresaConIdPersona = exports.getPersonaById = exports.asignarEnEmpresa = exports.crearPersona = exports.confirmMail = exports.getPersona = exports.registro = exports.login = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var config_1 = __importDefault(require("../config"));
+var _config_1 = __importDefault(require("../_config"));
 var Persona_1 = __importDefault(require("../models/Persona"));
 var registerConfirmation_1 = __importDefault(require("../emails/registerConfirmation"));
 var Persona_2 = require("../routes/Persona");
@@ -80,7 +80,7 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 if (TODA_LA_DATA) {
                     Personas = TODA_LA_DATA.Personas, Empresas = TODA_LA_DATA.Empresas;
                     console.log(Personas, Empresas);
-                    token = jsonwebtoken_1.default.sign(dataToken, config_1.default.SECRET_JWT);
+                    token = jsonwebtoken_1.default.sign(dataToken, _config_1.default.SECRET_JWT);
                     return [2 /*return*/, res.json({
                             data: { token: token, _id: ID_PERSONA, persona: persona, Personas: Personas, Empresas: Empresas },
                         })];
@@ -111,7 +111,7 @@ var registro = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 existePersona = _a.sent();
                 if (!!(existePersona === null || existePersona === void 0 ? void 0 : existePersona.correo)) return [3 /*break*/, 3];
                 persona = new Persona_1.default(req.body);
-                token = jsonwebtoken_1.default.sign(persona.toJSON(), config_1.default.SECRET_JWT, {
+                token = jsonwebtoken_1.default.sign(persona.toJSON(), _config_1.default.SECRET_JWT, {
                     expiresIn: 60 * 5 /* 5 minutos */,
                 });
                 urlBase = "http://" + req.get('host') + baseUrl + Persona_2.PATH_INICIAL_CORREO + "/";
@@ -140,7 +140,7 @@ var getPersona = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 _a.trys.push([0, 4, , 5]);
                 token = req.token;
                 if (!token) return [3 /*break*/, 3];
-                decoded = jsonwebtoken_1.default.verify(token, config_1.default.SECRET_JWT);
+                decoded = jsonwebtoken_1.default.verify(token, _config_1.default.SECRET_JWT);
                 if (!(decoded && typeof decoded === 'object')) return [3 /*break*/, 2];
                 ID_PERSONA = decoded.ID_PERSONA;
                 return [4 /*yield*/, Persona_1.default.findById(ID_PERSONA)];
@@ -173,7 +173,7 @@ var confirmMail = function (req, res) { return __awaiter(void 0, void 0, void 0,
             case 0:
                 _b.trys.push([0, 5, , 6]);
                 token = req.params.token;
-                _persona = jsonwebtoken_1.default.verify(token, config_1.default.SECRET_JWT);
+                _persona = jsonwebtoken_1.default.verify(token, _config_1.default.SECRET_JWT);
                 if (!_persona) return [3 /*break*/, 4];
                 return [4 /*yield*/, Persona_1.default.findOne({
                         'identidad.documentoIdentidad': _persona.identidad.documentoIdentidad,

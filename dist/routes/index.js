@@ -28,19 +28,20 @@ var path_1 = __importDefault(require("path"));
 var express_bearer_token_1 = __importDefault(require("express-bearer-token"));
 var path_2 = require("path");
 var routes_1 = __importDefault(require("./routes"));
+var _config_1 = __importDefault(require("../_config"));
 var router = express_1.Router();
 router.use(cors_1.default());
 router.use(express_1.default.json());
 router.use(express_1.default.urlencoded({ extended: true }));
 router.use(express_bearer_token_1.default());
-router.use(express_1.default.static(path_1.default.resolve(__dirname, '..', 'public')));
+router.use(express_1.default.static(path_1.default.resolve(_config_1.default.PATH_HTML)));
 router.use('/api', routes_1.default);
 router.get('/', function (_req, res) {
-    var html = path_2.resolve(__dirname, '..', 'public', 'index.html');
+    var html = path_2.resolve(_config_1.default.PATH_HTML, 'index.html');
     res.sendFile(html);
 });
 router.get('*', function (_req, res) {
-    var html = path_2.resolve(__dirname, '..', 'public', 'index.html');
+    var html = path_2.resolve(_config_1.default.PATH_HTML, 'index.html');
     res.sendFile(html);
 });
 exports.default = router;
