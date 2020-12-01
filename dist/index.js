@@ -25,9 +25,9 @@ models_1.default()
     // Socket IO
     socket_io_1.default(http);
     http.listen(PORT, function () { return console.log("Running in " + PORT + " port."); });
-    // console.log('5 segundos')
+    // console.log('3 segundos')
     // setTimeout(() => {
     //   tests()
-    // }, 5000)
+    // }, 3000)
 })
     .catch(function (error) { return console.log(error); });

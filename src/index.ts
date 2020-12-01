@@ -29,9 +29,9 @@ connection()
 
     http.listen(PORT, () => console.log(`Running in ${PORT} port.`))
 
-    // console.log('5 segundos')
+    // console.log('3 segundos')
     // setTimeout(() => {
     //   tests()
-    // }, 5000)
+    // }, 3000)
   })
   .catch((error) => console.log(error))
