@@ -1,6 +1,7 @@
 node_modules
 .dist
 .DS_Store
+
 src/config.ts
 dist/config.ts
 src/_config.ts
