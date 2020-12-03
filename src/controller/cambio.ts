@@ -1,8 +1,10 @@
+import mongoose from 'mongoose'
 import { Request, Response } from 'express'
 import { RequestDataPersona } from './interfaces'
 import { IOperacionCambio, EstadoCambio } from '../interfaces/Servicio/Cambio'
 import Cambio from '../models/Servicio/Cambio'
 import { Asignamiento } from '../interfaces/Utils'
+import OperacionCambio from '../models/Operacion/Cambio'
 
 interface BodyExecCambio extends IOperacionCambio {
   asignamiento: Asignamiento
@@ -23,7 +25,7 @@ export const execCambio = async (req: ExecCambio, res: Response) => {
       operacion.data = cambioData
       operacion.operacion = {
         ...operacion.operacion,
-        persona,
+        persona: persona._id,
         momento,
       }
       const mensaje = operacion.historia[0].mensajeDePersona
@@ -42,8 +44,8 @@ export const execCambio = async (req: ExecCambio, res: Response) => {
       } else {
         operacion.historia = []
       }
-
-      await operacion.save()
+      const nuevaOperacion = new OperacionCambio(operacion)
+      await nuevaOperacion.save()
 
       return res.json({ data: operacion })
     }
@@ -57,10 +59,30 @@ export const execCambio = async (req: ExecCambio, res: Response) => {
   }
 }
 
-export const getCambios = async (_req: Request, res: Response) => {
+export const getCambioById = async (req: Request, res: Response) => {
   try {
-    const cambios = await Cambio.find({})
-    return res.json({ data: cambios })
+    const cambio = await Cambio.findById(req.body.cambioId)
+    return res.json({ data: cambio })
+  } catch (error) {
+    console.error(error)
+    return res.status(404).json({ error })
+  }
+}
+
+export const getCambios = async (req: Request, res: Response) => {
+  try {
+    const Cambios = req.body.Cambios
+    let data
+    if (Array.isArray(Cambios)) {
+      if (Cambios.length) {
+        data = await Cambio.find({
+          _id: { $in: Cambios.map(mongoose.Types.ObjectId) },
+        })
+      }
+    } else {
+      data = await Cambio.find({})
+    }
+    return res.json({ data })
   } catch (error) {
     console.error(error)
     return res.status(404).json({ error })

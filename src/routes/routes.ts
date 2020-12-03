@@ -12,9 +12,9 @@ const router = Router()
 router.use('/admin', routerAdmin)
 router.use('/archivo', routerArchivo)
 
-router.use('/operacion', routerOperacion)
+router.use('/operacion', getPersona, routerOperacion)
 
 router.use('/persona', routerPersona)
-router.use('/empresa', getPersona(), routerEmpresa)
+router.use('/empresa', getPersona, routerEmpresa)
 
 export default router

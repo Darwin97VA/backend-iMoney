@@ -39,58 +39,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.schemaPersona = void 0;
+exports.schemaAdmin = void 0;
 var mongoose_1 = require("mongoose");
+var Admin_1 = require("../../interfaces/Admin");
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
-exports.schemaPersona = new mongoose_1.Schema({
-    identidad: {
-        tipoDocumentoIdentidad: String,
-        documentoIdentidad: String,
-        foto: String,
-        nacionalidad: String,
-        nombres: String,
-        primerApellido: String,
-        segundoApellido: String,
+exports.schemaAdmin = new mongoose_1.Schema({
+    nombres: {
+        type: String,
+        required: true,
     },
-    verificado: {
-        type: Boolean,
-        default: false,
+    correo: {
+        type: String,
+        required: true,
+        unique: true,
     },
-    pep: [
-        {
-            cargo: String,
-            organizacion: String,
-        },
-    ],
-    correo: String,
-    contraseña: String,
-    usuarios: {
-        propietario: [String],
-        administrador: [String],
-        estandar: [String],
-        visitante: [String],
+    contraseña: {
+        type: String,
+        required: true,
+        unique: true,
     },
-    asignamientos: [
-        {
-            _id: String,
-            tipo: String,
-        },
-    ],
-    cambiosAsignamientos: [
-        {
-            momento: Date,
-            asignamientos: [
-                {
-                    _id: String,
-                    tipo: String,
-                },
-            ],
-        },
-    ],
-    cuentas: [String],
-    operaciones: [String],
+    tipo: {
+        type: String,
+        required: true,
+        default: Admin_1.TipoAdmin.Admin,
+    },
 });
-exports.schemaPersona.pre('save', function (next) {
+exports.schemaAdmin.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function () {
         var user, salt, hash, error_1;
         return __generator(this, function (_a) {
@@ -118,8 +92,8 @@ exports.schemaPersona.pre('save', function (next) {
         });
     });
 });
-exports.schemaPersona.methods.comparePassword = function (password) {
+exports.schemaAdmin.methods.comparePassword = function (password) {
     return bcryptjs_1.default.compare(password, this.contraseña);
 };
-var Persona = mongoose_1.model('Person', exports.schemaPersona, 'personas');
-exports.default = Persona;
+var Admin = mongoose_1.model('Admin', exports.schemaAdmin, 'admins');
+exports.default = Admin;

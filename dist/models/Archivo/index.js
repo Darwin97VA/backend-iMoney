@@ -4,8 +4,14 @@ exports.schemaArchivo = void 0;
 var mongoose_1 = require("mongoose");
 exports.schemaArchivo = new mongoose_1.Schema({
     ruta: String,
-    subidoPor: Number,
-    perfil: String,
+    tipo: String,
+    subidoPor: {
+        _id: String,
+        asignamiento: {
+            _id: String,
+            tipo: String,
+        },
+    },
 });
 var Archivo = mongoose_1.model('Archivo', exports.schemaArchivo, 'archivos');
 exports.default = Archivo;

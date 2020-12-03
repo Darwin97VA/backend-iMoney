@@ -27,8 +27,16 @@ export const schemaOperacionCambio = new Schema({
     {
       estado: String, // EstadoCambio
       momento: Date,
-      mensajeDePersona: String, // _id del mensaje (IdMensaje)
-      mensajeDeAdmin: String, // _id del mensaje (IdMensaje)
+      mensajeDePersona: {
+        tipo: String,
+        contenido: String,
+        momento: Date,
+      },
+      mensajeDeAdmin: {
+        tipo: String,
+        contenido: String,
+        momento: Date,
+      },
     },
   ],
 })

@@ -8,6 +8,7 @@ import {
   Asignamiento,
 } from './Utils'
 import { Document, MongooseDocument } from 'mongoose'
+import { IdOperacionCambio } from './Servicio/Cambio'
 
 export interface Identidad {
   tipoDocumentoIdentidad: TipoDocumentoIdentidad
@@ -49,6 +50,7 @@ export interface IPersona extends Document {
   }[]
 
   cuentas?: IdCuenta
+  operaciones: IdOperacionCambio /* | IdOperacionInversion | IdOperacionFinanciamiento */[]
 }
 
 interface Pep {

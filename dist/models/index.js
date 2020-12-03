@@ -11,5 +11,6 @@ exports.default = (function () {
     return mongoose_1.default.connect(URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        useCreateIndex: true,
     });
 });

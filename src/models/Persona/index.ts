@@ -56,6 +56,7 @@ export const schemaPersona = new Schema({
   ],
 
   cuentas: [String],
+  operaciones: [String],
 })
 
 schemaPersona.pre<IPersonaDocument>('save', async function (next) {
