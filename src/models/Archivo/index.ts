@@ -1,17 +1,20 @@
+import { IArchivo } from 'interfaces/Archivo'
 import { Document, model, Schema } from 'mongoose'
 
-export interface IArchivo extends Document {
-  ruta: string
-  subidoPor: number
-  perfil: string // _id de Perfil
-}
+export interface IArchivoDocument extends Document, IArchivo {}
 
 export const schemaArchivo = new Schema({
   ruta: String,
-  subidoPor: Number, // DNI de (Persona | Persona)
-  perfil: String, // _id de Perfil
+  tipo: String, // enum TipoArchivo
+  subidoPor: {
+    _id: String, // IdPersona
+    asignamiento: {
+      _id: String, // IdPersona || IdEmpresa
+      tipo: String, // 'Persona' || 'Empresa'
+    },
+  },
 })
 
-const Archivo = model<IArchivo>('Archivo', schemaArchivo, 'archivos')
+const Archivo = model<IArchivoDocument>('Archivo', schemaArchivo, 'archivos')
 
 export default Archivo

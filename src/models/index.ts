@@ -17,4 +17,5 @@ export default () =>
   mongoose.connect(URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
   })

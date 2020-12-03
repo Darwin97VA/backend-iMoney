@@ -85,36 +85,39 @@ export const registro = async (req: RequestRegistro, res: Response) => {
   }
 }
 
-export const getPersona = async (
-  req: RequestDataPersona,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { token } = req
-    if (token) {
-      const decoded: TokenData | string = jwt.verify(token, config.SECRET_JWT)
+export const getPersona = () =>
+  async function getPersona(
+    req: RequestDataPersona,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { token } = req
+      if (token) {
+        const decoded: TokenData | string = jwt.verify(token, config.SECRET_JWT)
 
-      if (decoded && typeof decoded === 'object') {
-        const ID_PERSONA = decoded.ID_PERSONA
-        const persona = await Persona.findById(ID_PERSONA)
+        if (decoded && typeof decoded === 'object') {
+          const ID_PERSONA = decoded.ID_PERSONA
+          const persona = await Persona.findById(ID_PERSONA)
 
-        if (persona) {
-          if (!req.__data) {
-            req.__data = {}
+          if (persona) {
+            if (!req.__data) {
+              req.__data = {}
+            }
+            req.__data.persona = persona
+            return next()
           }
-          req.__data.persona = persona
-          return next()
         }
+        return res
+          .status(400)
+          .json({ data: 'El token de acceso está corrupto' })
       }
-      return res.status(400).json({ data: 'El token de acceso está corrupto' })
+      return res.status(400).json({ data: 'No se entregó el token de acceso.' })
+    } catch (error) {
+      console.error(error)
+      return res.status(400).json({ error })
     }
-    return res.status(400).json({ data: 'No se entregó el token de acceso.' })
-  } catch (error) {
-    console.error(error)
-    return res.status(400).json({ error })
   }
-}
 
 export const confirmMail = async (req: Request, res: Response) => {
   try {
