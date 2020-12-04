@@ -27,10 +27,14 @@ exports.schemaEmpresa = new mongoose_1.Schema({
         estandar: [String],
         visitante: [String],
     },
-    cuentas: {
-        type: [String],
-        default: [],
+    archivos: [String],
+    mensajes: [String],
+    operaciones: {
+        cambios: [String],
+        inversiones: [String],
+        credito: [String],
     },
+    cuentas: [String],
 });
 var Empresa = mongoose_1.model('Empresa', exports.schemaEmpresa, 'empresas');
 exports.default = Empresa;

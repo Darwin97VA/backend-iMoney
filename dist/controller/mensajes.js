@@ -39,91 +39,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.schemaPersona = void 0;
-var mongoose_1 = require("mongoose");
-var bcryptjs_1 = __importDefault(require("bcryptjs"));
-exports.schemaPersona = new mongoose_1.Schema({
-    identidad: {
-        tipoDocumentoIdentidad: String,
-        documentoIdentidad: String,
-        foto: String,
-        nacionalidad: String,
-        nombres: String,
-        primerApellido: String,
-        segundoApellido: String,
-    },
-    verificado: {
-        type: Boolean,
-        default: false,
-    },
-    pep: [
-        {
-            cargo: String,
-            organizacion: String,
-        },
-    ],
-    correo: String,
-    contraseña: String,
-    usuarios: {
-        propietario: [String],
-        administrador: [String],
-        estandar: [String],
-        visitante: [String],
-    },
-    asignamientos: [
-        {
-            _id: String,
-            tipo: String,
-        },
-    ],
-    cambiosAsignamientos: [
-        {
-            momento: Date,
-            asignamientos: [
-                {
-                    _id: String,
-                    tipo: String,
-                },
-            ],
-        },
-    ],
-    archivos: [String],
-    mensajes: [String],
-    operaciones: {
-        cambios: [String],
-    },
-    cuentas: [String],
-});
-exports.schemaPersona.pre('save', function (next) {
-    return __awaiter(this, void 0, void 0, function () {
-        var user, salt, hash, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 5, , 6]);
-                    user = this;
-                    if (!!user.isModified('contraseña')) return [3 /*break*/, 1];
-                    return [2 /*return*/, next()];
-                case 1: return [4 /*yield*/, bcryptjs_1.default.genSalt(10)];
-                case 2:
-                    salt = _a.sent();
-                    return [4 /*yield*/, bcryptjs_1.default.hash(user.contraseña, salt)];
-                case 3:
-                    hash = _a.sent();
-                    user.contraseña = hash;
-                    _a.label = 4;
-                case 4: return [3 /*break*/, 6];
-                case 5:
-                    error_1 = _a.sent();
-                    console.error(error_1);
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
-            }
-        });
+exports.getMensajesByIdPersonaAndPerfil = exports.getMensajeById = void 0;
+var Mensaje_1 = __importDefault(require("../models/Mensaje"));
+var getMensajeById = function (_id) { return Mensaje_1.default.findById(_id); };
+exports.getMensajeById = getMensajeById;
+var getMensajesByIdPersonaAndPerfil = function (persona, perfil) { return __awaiter(void 0, void 0, void 0, function () {
+    var mensajes, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                if (!perfil.mensajes) return [3 /*break*/, 2];
+                return [4 /*yield*/, Promise.all(perfil.mensajes.map(exports.getMensajeById))];
+            case 1:
+                mensajes = _a.sent();
+                return [2 /*return*/, mensajes.filter(function (msg) { return (msg === null || msg === void 0 ? void 0 : msg.from._id) === persona._id || (msg === null || msg === void 0 ? void 0 : msg.to._id) === persona._id; })];
+            case 2:
+                console.log('El perfil: ', persona._id, 'no tiene mensajes');
+                return [2 /*return*/, []];
+            case 3:
+                error_1 = _a.sent();
+                console.log('Error en: getMensajesByPersonaAndPerfil');
+                console.error(error_1);
+                return [2 /*return*/, error_1];
+            case 4: return [2 /*return*/];
+        }
     });
-});
-exports.schemaPersona.methods.comparePassword = function (password) {
-    return bcryptjs_1.default.compare(password, this.contraseña);
-};
-var Persona = mongoose_1.model('Person', exports.schemaPersona, 'personas');
-exports.default = Persona;
+}); };
+exports.getMensajesByIdPersonaAndPerfil = getMensajesByIdPersonaAndPerfil;
+// export const getMensajeById = async (req: Request, res: Response) => {
+//   try {
+//   } catch (error) {
+//     console.error(error)
+//     return res.status(404).json({ error })
+//   }
+// }

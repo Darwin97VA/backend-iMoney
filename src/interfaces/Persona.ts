@@ -9,6 +9,7 @@ import {
 } from './Utils'
 import { Document, MongooseDocument } from 'mongoose'
 import { IdOperacionCambio } from './Servicio/Cambio'
+import { IdMensaje } from './Mensaje'
 
 export interface Identidad {
   tipoDocumentoIdentidad: TipoDocumentoIdentidad
@@ -31,7 +32,7 @@ export interface IPersona extends Document {
   correo: string
   contraseña: string
 
-  usuarios?: Usuarios
+  usuarios: Usuarios
   // "Persona.usuarios" y "Empresa.usuarios"
   // mandan sobre "Persona.asignamientos"
   // por eso se obtiene el "Tipo de Relación"
@@ -49,11 +50,48 @@ export interface IPersona extends Document {
     asignamientos: Asignamiento[]
   }[]
 
-  cuentas?: IdCuenta
-  operaciones: IdOperacionCambio /* | IdOperacionInversion | IdOperacionFinanciamiento */[]
+  // Lo de abajo funciona en Persona como un contexto especial
+  // Funciona como un "Perfil":
+  // Porque un "Perfil" (Empresa | Persona) tiene:
+  // cuentas, mensajes, operaciones
+  // Y esos comienzan aquí------
+  archivos: IdArchivo[]
+  mensajes: IdMensaje[]
+  // (antes: ) operaciones: IdOperacionCambio /* | IdOperacionInversion | IdOperacionFinanciamiento */[]
+  operaciones: {
+    cambios: IdOperacionCambio[]
+    // inversiones?: IdInversion[]
+    // creditos?: IdCredito[]
+  }
+  cuentas: IdCuenta[]
+  // ------ hasta aquí.
 }
 
 interface Pep {
   cargo: string
   organizacion: string
 }
+
+/*
+type IdCuarto = string
+interface Casa {
+  piso1: {
+    cuartos: IdCuarto[]
+  }
+}
+interface Casota {
+  piso1: {
+    cuartos: IdCuarto[]
+  }
+  piso2: {
+    cuartos: IdCuarto[]
+  }
+}
+const casas: Casa[] = []
+const Casota = {
+  piso1: {
+    cuartos: ['_idCasa_1', '_idCasa_2']
+  }
+}
+casas.push(Casota)
+*/

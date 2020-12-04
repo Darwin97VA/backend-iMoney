@@ -2,7 +2,7 @@ import { Mensaje } from '../Mensaje'
 import { IdPersona } from '../Persona'
 import { Asignamiento, TipoMoneda } from '../Utils'
 import { Document, MongooseDocument } from 'mongoose'
-import { IdArchivo } from 'interfaces/Archivo'
+import { IdArchivo } from '../Archivo'
 
 export enum EstadoCambio {
   Iniciado = 'Iniciado',

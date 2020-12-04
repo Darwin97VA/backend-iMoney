@@ -58,7 +58,7 @@ var registerConfirmation_1 = __importDefault(require("../emails/registerConfirma
 var Persona_2 = require("../routes/Persona");
 var dataParaLogin_1 = require("./dataParaLogin");
 var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var persona, verificaPassword, ID_PERSONA, dataToken, TODA_LA_DATA, Personas, Empresas, token, error_1;
+    var persona, verificaPassword, ID_PERSONA, dataToken, TODA_LA_DATA, token, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -74,14 +74,13 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 if (!verificaPassword) return [3 /*break*/, 4];
                 ID_PERSONA = persona._id;
                 dataToken = { ID_PERSONA: ID_PERSONA };
-                return [4 /*yield*/, dataParaLogin_1.getSujetosDeAsignaciones(persona)];
+                return [4 /*yield*/, dataParaLogin_1.getAllDataForPersona(persona)];
             case 3:
                 TODA_LA_DATA = _a.sent();
                 if (TODA_LA_DATA) {
-                    Personas = TODA_LA_DATA.Personas, Empresas = TODA_LA_DATA.Empresas;
                     token = jsonwebtoken_1.default.sign(dataToken, _config_1.default.SECRET_JWT);
                     return [2 /*return*/, res.json({
-                            data: { token: token, _id: ID_PERSONA, persona: persona, Personas: Personas, Empresas: Empresas },
+                            data: __assign({ token: token, _id: ID_PERSONA, persona: persona }, TODA_LA_DATA),
                         })];
                 }
                 _a.label = 4;

@@ -43,8 +43,10 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSujetosDeAsignaciones = exports.getPersonas = void 0;
+exports.getAllDataForPersona = exports.getSujetosDeAsignaciones = exports.getPersonasFrom_PerfilUsuarios = void 0;
+var archivo_1 = require("./archivo");
 var empresa_1 = require("./empresa");
+var mensajes_1 = require("./mensajes");
 var persona_1 = require("./persona");
 var getPersonaById_SinPass = function (_id) { return __awaiter(void 0, void 0, void 0, function () {
     var persona, _persona;
@@ -59,6 +61,8 @@ var getPersonaById_SinPass = function (_id) { return __awaiter(void 0, void 0, v
                         identidad: persona.identidad,
                         asignamientos: persona.asignamientos,
                         usuarios: persona.usuarios,
+                        mensajes: persona.mensajes,
+                        archivos: persona.archivos,
                     };
                     return [2 /*return*/, _persona];
                 }
@@ -66,7 +70,7 @@ var getPersonaById_SinPass = function (_id) { return __awaiter(void 0, void 0, v
         }
     });
 }); };
-var getPersonas = function (sujeto) { return __awaiter(void 0, void 0, void 0, function () {
+var getPersonasFrom_PerfilUsuarios = function (sujeto) { return __awaiter(void 0, void 0, void 0, function () {
     var propietarios, administradores, estandares, visitantes, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -97,18 +101,23 @@ var getPersonas = function (sujeto) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-exports.getPersonas = getPersonas;
-var getSujetosDeAsignaciones = function (personas) { return __awaiter(void 0, void 0, void 0, function () {
+exports.getPersonasFrom_PerfilUsuarios = getPersonasFrom_PerfilUsuarios;
+// type PersonaDataPublica = {
+//   _id: any
+//   identidad: Identidad
+//   asignamientos: Asignamiento[]
+// } | null
+var getSujetosDeAsignaciones = function (persona) { return __awaiter(void 0, void 0, void 0, function () {
     var _empresasId, _personasId, empresasEnDondeEstoy, personasEnDondeEstoy, peronas1, peronas2, TodasPersonas, PersonasNoDuplicadas_1, EmpresasNoDuplicadas_1, error_2;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 _c.trys.push([0, 5, , 6]);
-                _empresasId = personas.asignamientos
+                _empresasId = persona.asignamientos
                     .filter(function (asig) { return asig.tipo === 'Empresa'; })
                     .map(function (asig) { return asig._id; });
-                _personasId = personas.asignamientos
+                _personasId = persona.asignamientos
                     .filter(function (asig) { return asig.tipo === 'Persona'; })
                     .map(function (asig) { return asig._id; });
                 return [4 /*yield*/, Promise.all(_empresasId.map(empresa_1.getEmpresaById))];
@@ -119,7 +128,7 @@ var getSujetosDeAsignaciones = function (personas) { return __awaiter(void 0, vo
                 personasEnDondeEstoy = ((_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.filter(function (e) { return !!e; })) || [];
                 return [4 /*yield*/, Promise.all(empresasEnDondeEstoy.map(function (e) {
                         if (e) {
-                            return exports.getPersonas(e);
+                            return exports.getPersonasFrom_PerfilUsuarios(e);
                         }
                         else {
                             return null;
@@ -129,7 +138,7 @@ var getSujetosDeAsignaciones = function (personas) { return __awaiter(void 0, vo
                 peronas1 = (_c.sent()).filter(function (p) { return !!p; });
                 return [4 /*yield*/, Promise.all(personasEnDondeEstoy.map(function (e) {
                         if (e) {
-                            return exports.getPersonas(e);
+                            return exports.getPersonasFrom_PerfilUsuarios(e);
                         }
                         else {
                             return null;
@@ -170,3 +179,69 @@ var getSujetosDeAsignaciones = function (personas) { return __awaiter(void 0, vo
     });
 }); };
 exports.getSujetosDeAsignaciones = getSujetosDeAsignaciones;
+// Al obtener toda la data para un usuario
+// 1) Se le dará todas las cuentas de los perfiles al que le pertenece
+// 2) Se le dará todas las operaciones de los perfiles al que le pertenece
+// 3) Se le dará todos los mensajes, QUE ESTE HA ENVIADO, de los perfiles al que le pertenece
+// 4) El filtro del item anterior (3) no se aplicará a los propietarios (3er sprint)
+var getAllDataForPersona = function (persona) { return __awaiter(void 0, void 0, void 0, function () {
+    var perfiles, Personas, Empresas, Mensajes1, Mensajes2, Mensajes, Archivos1, Archivos2, Archivos, Cuentas1, Cuentas2, Cuentas, Operaciones1, Operaciones2, Operaciones;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, exports.getSujetosDeAsignaciones(persona)];
+            case 1:
+                perfiles = _a.sent();
+                if (!perfiles) return [3 /*break*/, 6];
+                Personas = perfiles.Personas, Empresas = perfiles.Empresas;
+                return [4 /*yield*/, Promise.all(Personas.map(function (_persona) {
+                        if (_persona) {
+                            return mensajes_1.getMensajesByIdPersonaAndPerfil(persona._id, _persona);
+                        }
+                    }))];
+            case 2:
+                Mensajes1 = _a.sent();
+                return [4 /*yield*/, Promise.all(Empresas.map(function (_emp) {
+                        if (_emp) {
+                            return mensajes_1.getMensajesByIdPersonaAndPerfil(persona._id, _emp);
+                        }
+                    }))];
+            case 3:
+                Mensajes2 = _a.sent();
+                Mensajes = getDataNoRepit_Id(__spreadArrays(Mensajes1, Mensajes2));
+                return [4 /*yield*/, Promise.all(Personas.map(function (_persona) {
+                        if (_persona) {
+                            return archivo_1.getArchivosByIdPersonaAndPerfil(persona._id, _persona);
+                        }
+                    }))];
+            case 4:
+                Archivos1 = _a.sent();
+                return [4 /*yield*/, Promise.all(Empresas.map(function (_emp) {
+                        if (_emp) {
+                            return archivo_1.getArchivosByIdPersonaAndPerfil(persona._id, _emp);
+                        }
+                    }))];
+            case 5:
+                Archivos2 = _a.sent();
+                Archivos = __spreadArrays(Archivos1, Archivos2);
+                Cuentas1 = Personas.map(function (_persona) { return (_persona === null || _persona === void 0 ? void 0 : _persona.cuentas) || []; }).flat();
+                Cuentas2 = Empresas.map(function (_emp) { return (_emp === null || _emp === void 0 ? void 0 : _emp.cuentas) || []; }).flat();
+                Cuentas = __spreadArrays(Cuentas1, Cuentas2);
+                Operaciones1 = Personas.map(function (_persona) { return (_persona === null || _persona === void 0 ? void 0 : _persona.operaciones) || []; }).flat();
+                Operaciones2 = Empresas.map(function (_emp) { return (_emp === null || _emp === void 0 ? void 0 : _emp.operaciones) || []; }).flat();
+                Operaciones = __spreadArrays(Operaciones1, Operaciones2);
+                return [2 /*return*/, { Operaciones: Operaciones, Cuentas: Cuentas, Mensajes: Mensajes, Personas: Personas, Empresas: Empresas, Archivos: Archivos }];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllDataForPersona = getAllDataForPersona;
+var getDataNoRepit_Id = function (data) {
+    var dataNoRepetida = [];
+    data.forEach(function (d) {
+        var added = dataNoRepetida.find(function (dn) { return String(dn._id) == String(d._id); });
+        if (!added) {
+            dataNoRepetida.push(d);
+        }
+    });
+    return dataNoRepetida;
+};

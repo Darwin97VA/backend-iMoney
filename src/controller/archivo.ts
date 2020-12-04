@@ -3,6 +3,8 @@ import path from 'path'
 import fs from 'fs'
 import { path_files } from '../routes/Archivo'
 import Archivo from '../models/Archivo'
+import { IPersonaDocument } from '../models/Persona'
+import { IdArchivo } from '../interfaces/Archivo'
 
 const moveFile = (file: { mv: Function }, __path: string, name: string) => {
   const _path = path.resolve(__path)
@@ -77,5 +79,29 @@ export const create = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error)
     return res.status(400).json({ error })
+  }
+}
+
+export const getArchivoById = (_id: string) => Archivo.findById(_id)
+
+export const getArchivosByIdPersonaAndPerfil = async (
+  persona: IPersonaDocument,
+  perfil: { archivos: IdArchivo[] }
+) => {
+  try {
+    if (perfil.archivos) {
+      const archivos = await Promise.all(perfil.archivos.map(getArchivoById))
+      return archivos.filter(
+        (arch) =>
+          arch?.subidoPor?._id === persona._id ||
+          arch?.subidoPor?._id === persona._id
+      )
+    }
+    console.log('El perfil: ', persona._id, 'no tiene mensajes')
+    return []
+  } catch (error) {
+    console.log('Error en: getMensajesByPersonaAndPerfil')
+    console.error(error)
+    return error
   }
 }

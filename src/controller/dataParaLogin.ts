@@ -1,18 +1,27 @@
-import { IEmpresa } from 'interfaces/Empresa'
-import { Identidad, IPersona } from 'interfaces/Persona'
-import { Asignamiento } from 'interfaces/Utils'
+import { IdArchivo } from 'interfaces/Archivo'
+import { IdCuenta } from '../interfaces/Cuenta'
+import { IEmpresa } from '../interfaces/Empresa'
+import { IdMensaje } from '../interfaces/Mensaje'
+import { Identidad, IdPersona, IPersona } from '../interfaces/Persona'
+import { IdOperacionCambio } from '../interfaces/Servicio/Cambio'
+import { Asignamiento, Usuarios } from '../interfaces/Utils'
+import { getArchivosByIdPersonaAndPerfil } from './archivo'
+import { getCuentaById } from './cuenta'
 import { getEmpresaById } from './empresa'
+import { getMensajesByIdPersonaAndPerfil } from './mensajes'
 import { getPersonaById } from './persona'
 
 const getPersonaById_SinPass = async (_id: string) => {
   const persona = await getPersonaById(_id)
 
   if (persona && typeof persona === 'object') {
-    const _persona = {
+    const _persona: PersonaDataPublica = {
       _id: persona._id,
       identidad: persona.identidad,
       asignamientos: persona.asignamientos,
       usuarios: persona.usuarios,
+      mensajes: persona.mensajes,
+      archivos: persona.archivos,
     }
 
     return _persona
@@ -20,7 +29,9 @@ const getPersonaById_SinPass = async (_id: string) => {
   return null
 }
 
-export const getPersonas = async (sujeto: IEmpresa | IPersona) => {
+export const getPersonasFrom_PerfilUsuarios = async (
+  sujeto: IEmpresa | IPersona
+) => {
   try {
     if (sujeto.usuarios) {
       const propietarios = await Promise.all(
@@ -46,18 +57,33 @@ export const getPersonas = async (sujeto: IEmpresa | IPersona) => {
   }
 }
 
-type PersonaDataPublica = {
+export type PersonaDataPublica = {
   _id: any
   identidad: Identidad
   asignamientos: Asignamiento[]
+  usuarios?: Usuarios
+  archivos: IdArchivo[]
+  mensajes: IdMensaje[]
+  operaciones?: {
+    cambios: IdOperacionCambio[]
+    // inversiones?: IdInversion[]
+    // credito?: IdCredito[]
+  }
+  cuentas?: IdCuenta[]
 } | null
 
-export const getSujetosDeAsignaciones = async (personas: IPersona) => {
+// type PersonaDataPublica = {
+//   _id: any
+//   identidad: Identidad
+//   asignamientos: Asignamiento[]
+// } | null
+
+export const getSujetosDeAsignaciones = async (persona: IPersona) => {
   try {
-    const _empresasId = personas.asignamientos
+    const _empresasId = persona.asignamientos
       .filter((asig) => asig.tipo === 'Empresa')
       .map((asig) => asig._id)
-    const _personasId = personas.asignamientos
+    const _personasId = persona.asignamientos
       .filter((asig) => asig.tipo === 'Persona')
       .map((asig) => asig._id)
 
@@ -74,7 +100,7 @@ export const getSujetosDeAsignaciones = async (personas: IPersona) => {
       await Promise.all(
         empresasEnDondeEstoy.map((e) => {
           if (e) {
-            return getPersonas(e)
+            return getPersonasFrom_PerfilUsuarios(e)
           } else {
             return null
           }
@@ -86,7 +112,7 @@ export const getSujetosDeAsignaciones = async (personas: IPersona) => {
       await Promise.all(
         personasEnDondeEstoy.map((e) => {
           if (e) {
-            return getPersonas(e)
+            return getPersonasFrom_PerfilUsuarios(e)
           } else {
             return null
           }
@@ -131,4 +157,73 @@ export const getSujetosDeAsignaciones = async (personas: IPersona) => {
     console.error(error)
     return null
   }
+}
+
+// Al obtener toda la data para un usuario
+// 1) Se le dará todas las cuentas de los perfiles al que le pertenece
+// 2) Se le dará todas las operaciones de los perfiles al que le pertenece
+// 3) Se le dará todos los mensajes, QUE ESTE HA ENVIADO, de los perfiles al que le pertenece
+// 4) El filtro del item anterior (3) no se aplicará a los propietarios (3er sprint)
+
+export const getAllDataForPersona = async (persona: IPersona) => {
+  const perfiles = await getSujetosDeAsignaciones(persona)
+  if (perfiles) {
+    const { Personas, Empresas } = perfiles
+
+    const Mensajes1 = await Promise.all(
+      Personas.map((_persona) => {
+        if (_persona) {
+          return getMensajesByIdPersonaAndPerfil(persona._id, _persona)
+        }
+      })
+    )
+
+    const Mensajes2 = await Promise.all(
+      Empresas.map((_emp) => {
+        if (_emp) {
+          return getMensajesByIdPersonaAndPerfil(persona._id, _emp)
+        }
+      })
+    )
+    const Mensajes = getDataNoRepit_Id([...Mensajes1, ...Mensajes2])
+
+    const Archivos1 = await Promise.all(
+      Personas.map((_persona) => {
+        if (_persona) {
+          return getArchivosByIdPersonaAndPerfil(persona._id, _persona)
+        }
+      })
+    )
+    const Archivos2 = await Promise.all(
+      Empresas.map((_emp) => {
+        if (_emp) {
+          return getArchivosByIdPersonaAndPerfil(persona._id, _emp)
+        }
+      })
+    )
+    const Archivos = [...Archivos1, ...Archivos2]
+
+    const Cuentas1 = Personas.map((_persona) => _persona?.cuentas || []).flat()
+    const Cuentas2 = Empresas.map((_emp) => _emp?.cuentas || []).flat()
+    const Cuentas = [...Cuentas1, ...Cuentas2]
+
+    const Operaciones1 = Personas.map(
+      (_persona) => _persona?.operaciones || []
+    ).flat()
+    const Operaciones2 = Empresas.map((_emp) => _emp?.operaciones || []).flat()
+    const Operaciones = [...Operaciones1, ...Operaciones2]
+
+    return { Operaciones, Cuentas, Mensajes, Personas, Empresas, Archivos }
+  }
+}
+
+const getDataNoRepit_Id = (data: { _id: string }[]) => {
+  const dataNoRepetida: { _id: string }[] = []
+  data.forEach((d) => {
+    const added = dataNoRepetida.find((dn) => String(dn._id) == String(d._id))
+    if (!added) {
+      dataNoRepetida.push(d)
+    }
+  })
+  return dataNoRepetida
 }

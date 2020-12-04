@@ -8,7 +8,7 @@ import { Asignamiento, NivelAsignacion } from '../interfaces/Utils'
 import { PATH_INICIAL_CORREO } from '../routes/Persona'
 import { TokenData, RequestDataPersona } from './interfaces'
 import { IEmpresa } from '../interfaces/Empresa'
-import { getSujetosDeAsignaciones } from './dataParaLogin'
+import { getAllDataForPersona, getSujetosDeAsignaciones } from './dataParaLogin'
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -24,14 +24,12 @@ export const login = async (req: Request, res: Response) => {
           const ID_PERSONA = persona._id
           const dataToken: TokenData = { ID_PERSONA }
 
-          const TODA_LA_DATA = await getSujetosDeAsignaciones(persona)
+          const TODA_LA_DATA = await getAllDataForPersona(persona)
 
           if (TODA_LA_DATA) {
-            const { Personas, Empresas } = TODA_LA_DATA
-
             const token = jwt.sign(dataToken, config.SECRET_JWT)
             return res.json({
-              data: { token, _id: ID_PERSONA, persona, Personas, Empresas },
+              data: { token, _id: ID_PERSONA, persona, ...TODA_LA_DATA },
             })
           }
         }

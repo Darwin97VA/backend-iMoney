@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = void 0;
+exports.getArchivosByIdPersonaAndPerfil = exports.getArchivoById = exports.create = void 0;
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var Archivo_1 = require("../routes/Archivo");
@@ -126,3 +126,33 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 exports.create = create;
+var getArchivoById = function (_id) { return Archivo_2.default.findById(_id); };
+exports.getArchivoById = getArchivoById;
+var getArchivosByIdPersonaAndPerfil = function (persona, perfil) { return __awaiter(void 0, void 0, void 0, function () {
+    var archivos, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                if (!perfil.archivos) return [3 /*break*/, 2];
+                return [4 /*yield*/, Promise.all(perfil.archivos.map(exports.getArchivoById))];
+            case 1:
+                archivos = _a.sent();
+                return [2 /*return*/, archivos.filter(function (arch) {
+                        var _a, _b;
+                        return ((_a = arch === null || arch === void 0 ? void 0 : arch.subidoPor) === null || _a === void 0 ? void 0 : _a._id) === persona._id ||
+                            ((_b = arch === null || arch === void 0 ? void 0 : arch.subidoPor) === null || _b === void 0 ? void 0 : _b._id) === persona._id;
+                    })];
+            case 2:
+                console.log('El perfil: ', persona._id, 'no tiene mensajes');
+                return [2 /*return*/, []];
+            case 3:
+                error_2 = _a.sent();
+                console.log('Error en: getMensajesByPersonaAndPerfil');
+                console.error(error_2);
+                return [2 /*return*/, error_2];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getArchivosByIdPersonaAndPerfil = getArchivosByIdPersonaAndPerfil;

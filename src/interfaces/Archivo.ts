@@ -13,7 +13,8 @@ export interface IArchivo {
   tipo: TipoArchivo
   ruta: string
   subidoPor: {
-    _id: string // _id de la persona
-    asignamiento: Asignamiento // en qué perfil lo hizo
+    _id: string // _id de la persona (si "isAdmin" es verdadero, entonces es el _id del Admin)
+    asignamiento?: Asignamiento // en qué perfil lo hizo
+    isAdmin?: boolean
   }
 }

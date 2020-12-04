@@ -55,8 +55,14 @@ export const schemaPersona = new Schema({
     },
   ],
 
+  archivos: [String], // IdArchivo[]
+  mensajes: [String],
+  operaciones: {
+    cambios: [String],
+    // inversiones: [String],
+    // creditos: [String],
+  },
   cuentas: [String],
-  operaciones: [String],
 })
 
 schemaPersona.pre<IPersonaDocument>('save', async function (next) {

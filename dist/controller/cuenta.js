@@ -39,91 +39,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.schemaPersona = void 0;
-var mongoose_1 = require("mongoose");
-var bcryptjs_1 = __importDefault(require("bcryptjs"));
-exports.schemaPersona = new mongoose_1.Schema({
-    identidad: {
-        tipoDocumentoIdentidad: String,
-        documentoIdentidad: String,
-        foto: String,
-        nacionalidad: String,
-        nombres: String,
-        primerApellido: String,
-        segundoApellido: String,
-    },
-    verificado: {
-        type: Boolean,
-        default: false,
-    },
-    pep: [
-        {
-            cargo: String,
-            organizacion: String,
-        },
-    ],
-    correo: String,
-    contraseña: String,
-    usuarios: {
-        propietario: [String],
-        administrador: [String],
-        estandar: [String],
-        visitante: [String],
-    },
-    asignamientos: [
-        {
-            _id: String,
-            tipo: String,
-        },
-    ],
-    cambiosAsignamientos: [
-        {
-            momento: Date,
-            asignamientos: [
-                {
-                    _id: String,
-                    tipo: String,
-                },
-            ],
-        },
-    ],
-    archivos: [String],
-    mensajes: [String],
-    operaciones: {
-        cambios: [String],
-    },
-    cuentas: [String],
-});
-exports.schemaPersona.pre('save', function (next) {
-    return __awaiter(this, void 0, void 0, function () {
-        var user, salt, hash, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 5, , 6]);
-                    user = this;
-                    if (!!user.isModified('contraseña')) return [3 /*break*/, 1];
-                    return [2 /*return*/, next()];
-                case 1: return [4 /*yield*/, bcryptjs_1.default.genSalt(10)];
-                case 2:
-                    salt = _a.sent();
-                    return [4 /*yield*/, bcryptjs_1.default.hash(user.contraseña, salt)];
-                case 3:
-                    hash = _a.sent();
-                    user.contraseña = hash;
-                    _a.label = 4;
-                case 4: return [3 /*break*/, 6];
-                case 5:
-                    error_1 = _a.sent();
-                    console.error(error_1);
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
-            }
-        });
+exports.getCuentaById = exports.crearCuenta = void 0;
+var Empresa_1 = __importDefault(require("../models/Empresa"));
+var Persona_1 = __importDefault(require("../models/Persona"));
+var Cuenta_1 = __importDefault(require("../models/Cuenta"));
+var crearCuenta = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, asignamiento, cuenta, _cuenta, cuentaCreada, persona, empresa, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 10, , 11]);
+                _a = req.body, asignamiento = _a.asignamiento, cuenta = _a.cuenta;
+                if (!(asignamiento && cuenta && req.__data)) return [3 /*break*/, 9];
+                _cuenta = new Cuenta_1.default(cuenta);
+                return [4 /*yield*/, _cuenta.save()];
+            case 1:
+                cuentaCreada = _b.sent();
+                if (!(asignamiento.tipo === 'Persona')) return [3 /*break*/, 5];
+                return [4 /*yield*/, Persona_1.default.findById(asignamiento._id)];
+            case 2:
+                persona = _b.sent();
+                if (!(persona === null || persona === void 0 ? void 0 : persona.cuentas)) return [3 /*break*/, 4];
+                persona.cuentas.push(cuentaCreada._id);
+                return [4 /*yield*/, (persona === null || persona === void 0 ? void 0 : persona.save())];
+            case 3:
+                _b.sent();
+                _b.label = 4;
+            case 4: return [3 /*break*/, 8];
+            case 5: return [4 /*yield*/, Empresa_1.default.findById(asignamiento._id)];
+            case 6:
+                empresa = _b.sent();
+                if (empresa === null || empresa === void 0 ? void 0 : empresa.cuentas) {
+                    empresa === null || empresa === void 0 ? void 0 : empresa.cuentas.push(cuentaCreada._id);
+                }
+                return [4 /*yield*/, (empresa === null || empresa === void 0 ? void 0 : empresa.save())];
+            case 7:
+                _b.sent();
+                _b.label = 8;
+            case 8: return [2 /*return*/, res.json({ data: cuentaCreada })];
+            case 9: return [3 /*break*/, 11];
+            case 10:
+                error_1 = _b.sent();
+                console.error(error_1);
+                return [2 /*return*/, res.status(400).json({ error: error_1 })];
+            case 11: return [2 /*return*/];
+        }
     });
-});
-exports.schemaPersona.methods.comparePassword = function (password) {
-    return bcryptjs_1.default.compare(password, this.contraseña);
-};
-var Persona = mongoose_1.model('Person', exports.schemaPersona, 'personas');
-exports.default = Persona;
+}); };
+exports.crearCuenta = crearCuenta;
+var getCuentaById = function (_id) { return Cuenta_1.default.findById(_id); };
+exports.getCuentaById = getCuentaById;

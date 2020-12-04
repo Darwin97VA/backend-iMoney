@@ -28,10 +28,14 @@ export const schemaEmpresa = new Schema({
     visitante: [String], // _id de Persona
   },
 
-  cuentas: {
-    type: [String],
-    default: [],
-  }, // _idCuentaBancaria[]
+  archivos: [String], // IdArchivo[]
+  mensajes: [String], // IdMensaje[]
+  operaciones: {
+    cambios: [String], // IdOperacionCambio[]
+    inversiones: [String], // inversiones?: IdInversion[]
+    credito: [String], // credito?: IdCredito[]
+  },
+  cuentas: [String], // _idCuentaBancaria[]
 })
 
 const Empresa = model<IEmpresa>('Empresa', schemaEmpresa, 'empresas')
