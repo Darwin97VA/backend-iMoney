@@ -10,7 +10,7 @@ export enum TipoArchivo {
 export type IdArchivo = MongooseDocument['_id']
 export interface IArchivo {
   _id: IdArchivo
-  tipo: TipoArchivo
+  tipo?: TipoArchivo
   ruta: string
   subidoPor: {
     _id: string // _id de la persona (si "isAdmin" es verdadero, entonces es el _id del Admin)

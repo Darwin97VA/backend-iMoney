@@ -5,6 +5,9 @@ import { path_files } from '../routes/Archivo'
 import Archivo from '../models/Archivo'
 import { IPersonaDocument } from '../models/Persona'
 import { IdArchivo } from '../interfaces/Archivo'
+import { Asignamiento } from 'interfaces/Utils'
+import _config from '../_config'
+import { RequestDataPersona } from './interfaces'
 
 const moveFile = (file: { mv: Function }, __path: string, name: string) => {
   const _path = path.resolve(__path)
@@ -81,7 +84,50 @@ export const create = async (req: Request, res: Response) => {
     return res.status(400).json({ error })
   }
 }
+interface UploadRequest extends Request, RequestDataPersona {
+  body: {
+    asignamiento?: Asignamiento
+  }
+}
+export const uploadByPersona = async (req: UploadRequest, res: Response) => {
+  try {
+    const momento = new Date().getTime()
+    const { files, body, __data } = req
+    const { asignamiento } = body
 
+    if (__data?.persona && files) {
+      const { persona } = __data
+      let path_system = path.resolve(_config.PATH_ARCHIVOS, persona?._id)
+      let subidoPor
+      if (asignamiento) {
+        path_system = path.resolve(path_system, asignamiento._id)
+        subidoPor = {
+          _id: persona, // _id de la persona
+          asignamiento,
+        }
+      } else {
+        path_system = path.resolve(path_system, 'temporal')
+        subidoPor = { _id: persona }
+      }
+      const path_file = path.resolve(
+        path_system,
+        momento + '--' + files.archivo.name
+      )
+      await files.archivo.mv(path_file)
+
+      const nuevoArchivo = new Archivo({
+        tipo: path.extname(path_file),
+        ruta: path_file,
+        subidoPor,
+      })
+      const archivoGuardado = await nuevoArchivo.save()
+      return res.json({ data: archivoGuardado })
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(400).json({ error })
+  }
+}
 export const getArchivoById = (_id: string) => Archivo.findById(_id)
 
 export const getArchivosByIdPersonaAndPerfil = async (

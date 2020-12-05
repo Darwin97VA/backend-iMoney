@@ -1,8 +1,7 @@
 import express, { Router, Request, Response } from 'express'
+import path, { resolve } from 'path'
 import cors from 'cors'
-import path from 'path'
 import bearerToken from 'express-bearer-token'
-import { resolve } from 'path'
 import routes from './routes'
 import config from '../_config'
 

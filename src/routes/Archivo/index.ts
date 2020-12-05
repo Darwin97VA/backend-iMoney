@@ -1,8 +1,8 @@
-// import { getPersona } from '../../controller/persona'
+import { getPersona } from '../../controller/persona'
 import express, { Router } from 'express'
 import fileUpload from 'express-fileupload'
 import path from 'path'
-import { create } from '../../controller/archivo'
+import { create, uploadByPersona } from '../../controller/archivo'
 
 const router = Router()
 
@@ -15,6 +15,7 @@ router.use(
 )
 
 router.use(express.static(path_files))
-router.post('/:persona/:tipoDonde/:idDonde', /* getPersona(), */ create)
+// router.post('/:persona/:tipoDonde/:idDonde', getPersona, create)
+router.post('/', getPersona, uploadByPersona)
 
 export default router

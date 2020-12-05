@@ -1,4 +1,6 @@
-import { IdArchivo } from 'interfaces/Archivo'
+import { IdArchivo } from '../interfaces/Archivo'
+import Empresa from '../models/Empresa'
+import Persona from '../models/Persona'
 import { IdCuenta } from '../interfaces/Cuenta'
 import { IEmpresa } from '../interfaces/Empresa'
 import { IdMensaje } from '../interfaces/Mensaje'
@@ -9,7 +11,7 @@ import { getArchivosByIdPersonaAndPerfil } from './archivo'
 import { getCuentaById } from './cuenta'
 import { getEmpresaById } from './empresa'
 import { getMensajesByIdPersonaAndPerfil } from './mensajes'
-import { getPersonaById } from './persona'
+import { getPersonaById } from './utilPersona'
 
 const getPersonaById_SinPass = async (_id: string) => {
   const persona = await getPersonaById(_id)
@@ -217,7 +219,7 @@ export const getAllDataForPersona = async (persona: IPersona) => {
   }
 }
 
-const getDataNoRepit_Id = (data: { _id: string }[]) => {
+export const getDataNoRepit_Id = (data: { _id: string }[]) => {
   const dataNoRepetida: { _id: string }[] = []
   data.forEach((d) => {
     const added = dataNoRepetida.find((dn) => String(dn._id) == String(d._id))
@@ -226,4 +228,17 @@ const getDataNoRepit_Id = (data: { _id: string }[]) => {
     }
   })
   return dataNoRepetida
+}
+
+export const getSujetoByAsignamiento = (asignamiento: Asignamiento) => {
+  try {
+    if (asignamiento.tipo === 'Empresa') {
+      return Empresa.findById(asignamiento._id)
+    } else if (asignamiento.tipo === 'Persona') {
+      return Persona.findById(asignamiento._id)
+    }
+  } catch (error) {
+    console.error(error)
+    return error
+  }
 }
